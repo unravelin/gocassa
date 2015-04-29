@@ -36,22 +36,22 @@ func (r Relation) cql() (string, []interface{}) {
 
 	switch r.op {
 	case equality:
-		ret = key + " = ?"
+		ret = key + " = " + val
 	case in:
 		// Ideally the above code should work.
 		qs := []string{}
 		for i := 0; i < len(r.terms); i++ {
-			qs = append(qs, "?")
+			qs = append(qs, val)
 		}
 		return fmt.Sprintf(key+" IN (%s)", strings.Join(qs, ", ")), r.terms
 	case greaterThan:
-		ret = key + " > ?"
+		ret = key + " > " + val
 	case greaterThanOrEquals:
-		ret = key + " >= ?"
+		ret = key + " >= " + val
 	case lesserThan:
-		ret = key + " < ?"
+		ret = key + " < " + val
 	case lesserThanOrEquals:
-		ret = key + " <= ?"
+		ret = key + " <= " + val
 	}
 	return ret, r.terms
 }
