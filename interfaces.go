@@ -39,6 +39,7 @@ type MapTable interface {
 	Set(v interface{}) Op
 	Update(id interface{}, m map[string]interface{}) Op
 	Delete(id interface{}) Op
+	List(startId interface{}, limit int, pointerToASlice interface{}) Op
 	Read(id, pointer interface{}) Op
 	MultiRead(ids []interface{}, pointerToASlice interface{}) Op
 	WithOptions(Options) MapTable

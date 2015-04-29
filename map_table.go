@@ -21,6 +21,14 @@ func (m *mapT) MultiRead(ids []interface{}, pointerToASlice interface{}) Op {
 	return m.Where(In(m.idField, ids...)).Read(pointerToASlice)
 }
 
+func (m *mapT) List(startId interface{}, limit int, pointerToASlice interface{}) Op {
+	rels := []Relation{}
+	if startId != nil {
+		rels = append(rels, GTE(m.idField, startId))
+	}
+	return m.WithOptions(Options{Limit: limit}).(*mapT).Where(rels...).Read(pointerToASlice)
+}
+
 func (m *mapT) WithOptions(o Options) MapTable {
 	return &mapT{
 		Table:   m.Table.WithOptions(o),

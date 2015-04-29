@@ -102,3 +102,32 @@ func TestMapTableMultiRead(t *testing.T) {
 		t.Fatalf("Expected to find jane, got %v", (*customers)[1])
 	}
 }
+
+func TestMapTableList(t *testing.T) {
+	tbl := ns.MapTable("customer84", "Id", Customer{})
+	createIf(tbl.(TableChanger), t)
+	joe := Customer{
+		Id:   "33",
+		Name: "Joe",
+	}
+	err := tbl.Set(joe).Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	jane := Customer{
+		Id:   "34",
+		Name: "Jane",
+	}
+	err = tbl.Set(jane).Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	customers := &[]Customer{}
+	err = tbl.List(nil, 10, customers).Run()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(*customers) != 2 {
+		t.Fatalf("Expected to list 2 records, got %d", len(*customers))
+	}
+}
