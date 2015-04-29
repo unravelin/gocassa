@@ -18,14 +18,22 @@ const (
 )
 
 type Relation struct {
-	op    int
-	key   string
-	terms []interface{}
+	op       int
+	key      string
+	terms    []interface{}
+	function string
 }
 
 func (r Relation) cql() (string, []interface{}) {
 	ret := ""
 	key := strings.ToLower(r.key)
+	val := "?"
+
+	if r.function != "" {
+		key = fmt.Sprintf("%s(%s)", r.function, key)
+		val = fmt.Sprintf("%s(%s)", r.function, val)
+	}
+
 	switch r.op {
 	case equality:
 		ret = key + " = ?"
@@ -92,6 +100,11 @@ func (r Relation) accept(i interface{}) bool {
 	}
 
 	return err == nil && result
+}
+
+func (r Relation) WrapFunction(f string) Relation {
+	r.function = f
+	return r
 }
 
 func toI(i interface{}) []interface{} {

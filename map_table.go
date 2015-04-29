@@ -24,7 +24,7 @@ func (m *mapT) MultiRead(ids []interface{}, pointerToASlice interface{}) Op {
 func (m *mapT) List(startId interface{}, limit int, pointerToASlice interface{}) Op {
 	rels := []Relation{}
 	if startId != nil {
-		rels = append(rels, GTE(m.idField, startId))
+		rels = append(rels, GT(m.idField, startId).WrapFunction("token"))
 	}
 	return m.WithOptions(Options{Limit: limit}).(*mapT).Where(rels...).Read(pointerToASlice)
 }
