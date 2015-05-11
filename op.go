@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"runtime"
 	"strconv"
+	"strings"
+	"time"
 )
 
 const (
@@ -242,6 +244,20 @@ func updateStatement(kn, cfName string, fields map[string]interface{}, opts Opti
 	if opts.TTL != 0 {
 		buf.WriteString("USING TTL ")
 		buf.WriteString(strconv.FormatFloat(opts.TTL.Seconds(), 'f', 0, 64))
+		buf.WriteRune(' ')
+	}
+
+	t := time.Time{}
+	if opts.Timestamp != t {
+		// If we've already set an option, we must use the AND syntax.
+		if strings.Contains(buf.String(), "USING TTL") {
+			buf.WriteString("AND ")
+		} else {
+			buf.WriteString("USING ")
+		}
+
+		buf.WriteString("TIMESTAMP ")
+		buf.WriteString(strconv.Itoa(int(opts.Timestamp.Unix())))
 		buf.WriteRune(' ')
 	}
 

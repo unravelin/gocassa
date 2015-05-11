@@ -11,6 +11,8 @@ type Options struct {
 	// TTL specifies a duration over which data is valid. It will be truncated to second precision upon statement
 	// execution.
 	TTL time.Duration
+	// Timestamp specifies the timestamp of the update. It will be truncated to second precision upon statement execution.
+	Timestamp time.Time
 	// Limit query result set
 	Limit int
 	// TableName
@@ -23,6 +25,7 @@ func (o Options) Merge(neu Options) Options {
 		TTL:       o.TTL,
 		Limit:     o.Limit,
 		TableName: o.TableName,
+		Timestamp: o.Timestamp,
 	}
 	if neu.TTL != time.Duration(0) {
 		ret.TTL = neu.TTL
@@ -32,6 +35,12 @@ func (o Options) Merge(neu Options) Options {
 	}
 	if len(neu.TableName) > 0 {
 		ret.TableName = neu.TableName
+	}
+
+	// Zero time
+	t := time.Time{}
+	if neu.Timestamp != t {
+		ret.Timestamp = neu.Timestamp
 	}
 	return ret
 }
