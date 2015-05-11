@@ -257,7 +257,7 @@ func updateStatement(kn, cfName string, fields map[string]interface{}, opts Opti
 		}
 
 		buf.WriteString("TIMESTAMP ")
-		buf.WriteString(strconv.Itoa(int(opts.Timestamp.Unix())))
+		buf.WriteString(strconv.Itoa(int(opts.Timestamp.UnixNano() / 1000)))
 		buf.WriteRune(' ')
 	}
 
