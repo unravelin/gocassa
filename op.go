@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"runtime"
 	"strconv"
+	"strings"
+	"time"
 )
 
 const (
@@ -48,10 +50,12 @@ func (w *singleOp) read(qe QueryExecutor, opt Options) error {
 	if err != nil {
 		return err
 	}
+
 	bytes, err := json.Marshal(maps)
 	if err != nil {
 		return err
 	}
+
 	return json.Unmarshal(bytes, w.result)
 }
 
@@ -68,10 +72,12 @@ func (w *singleOp) readOne(qe QueryExecutor, opt Options) error {
 			line: n,
 		}
 	}
+
 	bytes, err := json.Marshal(maps[0])
 	if err != nil {
 		return err
 	}
+
 	return json.Unmarshal(bytes, w.result)
 }
 
@@ -242,6 +248,20 @@ func updateStatement(kn, cfName string, fields map[string]interface{}, opts Opti
 	if opts.TTL != 0 {
 		buf.WriteString("USING TTL ")
 		buf.WriteString(strconv.FormatFloat(opts.TTL.Seconds(), 'f', 0, 64))
+		buf.WriteRune(' ')
+	}
+
+	t := time.Time{}
+	if opts.Timestamp != t {
+		// If we've already set an option, we must use the AND syntax.
+		if strings.Contains(buf.String(), "USING TTL") {
+			buf.WriteString("AND ")
+		} else {
+			buf.WriteString("USING ")
+		}
+
+		buf.WriteString("TIMESTAMP ")
+		buf.WriteString(strconv.Itoa(int(opts.Timestamp.UnixNano() / 1000)))
 		buf.WriteRune(' ')
 	}
 
