@@ -104,11 +104,17 @@ func getStructInfo(v r.Value) *structInfo {
 		field := st.Field(i)
 		info := fieldInfo{Num: i}
 		tag := field.Tag.Get("cql")
+
+		if tag == "-" {
+			continue
+		}
+
 		// If there is no cql specific tag and there are no other tags
 		// set the cql tag to the whole field tag
 		if tag == "" && strings.Index(string(field.Tag), ":") < 0 {
 			tag = string(field.Tag)
 		}
+
 		if tag != "" {
 			info.Key = tag
 		} else {

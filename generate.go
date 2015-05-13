@@ -3,10 +3,11 @@ package gocassa
 import (
 	"errors"
 	"fmt"
-	"github.com/gocql/gocql"
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/gocql/gocql"
 )
 
 // CREATE TABLE users (
@@ -34,8 +35,10 @@ func createTable(keySpace, cf string, partitionKeys, colKeys []string, fields []
 		if err != nil {
 			return "", err
 		}
-		l := "    " + strings.ToLower(fields[i]) + " " + typeStr
-		fieldLines = append(fieldLines, l)
+		if typeStr != "" {
+			l := "    " + strings.ToLower(fields[i]) + " " + typeStr
+			fieldLines = append(fieldLines, l)
+		}
 	}
 	str := "    PRIMARY KEY ((%v) %v)"
 	if len(colKeys) > 0 {
@@ -43,6 +46,7 @@ func createTable(keySpace, cf string, partitionKeys, colKeys []string, fields []
 	}
 	fieldLines = append(fieldLines, fmt.Sprintf(str, j(partitionKeys), j(colKeys)))
 	stmt := strings.Join([]string{firstLine, strings.Join(fieldLines, ",\n"), ");"}, "\n")
+
 	return stmt, nil
 }
 

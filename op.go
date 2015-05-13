@@ -50,10 +50,12 @@ func (w *singleOp) read(qe QueryExecutor, opt Options) error {
 	if err != nil {
 		return err
 	}
+
 	bytes, err := json.Marshal(maps)
 	if err != nil {
 		return err
 	}
+
 	return json.Unmarshal(bytes, w.result)
 }
 
@@ -70,10 +72,12 @@ func (w *singleOp) readOne(qe QueryExecutor, opt Options) error {
 			line: n,
 		}
 	}
+
 	bytes, err := json.Marshal(maps[0])
 	if err != nil {
 		return err
 	}
+
 	return json.Unmarshal(bytes, w.result)
 }
 
